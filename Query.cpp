@@ -1,3 +1,5 @@
+/*Eli Haimov - 308019306*/
+
 #include "Query.h"
 #include "TextQuery.h"
 #include <memory>
@@ -45,7 +47,7 @@ std::shared_ptr<QueryBase> QueryBase::factory(const string& s)
   smatch Match = *words_begin;
   if(distance(words_begin,words_end) > 0)
   {
-    return std::shared_ptr<QueryBase>(new NQuery(Match[1].str(),Match[3].str(),stoi(Match.str(2))));
+    return std::shared_ptr<QueryBase>(new NQuery(Match.str(1),Match.str(3),stoi(Match.str(2))));
   }
 
   // NOT case:
@@ -54,7 +56,7 @@ std::shared_ptr<QueryBase> QueryBase::factory(const string& s)
   smatch Match = *words_begin;
   if(distance(words_begin,words_end) > 0)
   {
-    return std::shared_ptr<QueryBase>(new NotQuery(Match[1].str()));
+    return std::shared_ptr<QueryBase>(new NotQuery(Match.str(1)));
   }
 
   // word case:
@@ -63,12 +65,12 @@ std::shared_ptr<QueryBase> QueryBase::factory(const string& s)
   smatch Match = *words_begin;
   if(distance(words_begin,words_end) > 0)
   {
-    return std::shared_ptr<QueryBase>(new WordQuery(Match[1].str()));
+    return std::shared_ptr<QueryBase>(new WordQuery(Match.str(1)));
   }
 
   // else
   cout << "Unrecognized search" << endl;
-  
+
 }
 ////////////////////////////////////////////////////////////////////////////////
 QueryResult NotQuery::eval(const TextQuery &text) const
@@ -118,5 +120,28 @@ QueryResult OrQuery::eval(const TextQuery &text) const
 QueryResult NQuery::eval(const TextQuery &text) const
 {
 
+QueryResult res = AndQuery::eval(text); 
+auto ret_lines = std::make_shared<std::set<line_no>>();
+
+// All Regex:
+regex regex_words("[\\w']+");
+regex regex_R2L("(.)*" + right_query + " ([\\w']+ ){0," + to_string(dist) +"}" + left_query + "(.)*");
+regex regex_L2R("(.)*" + left_query + " ([\\w']+ ){0," + to_string(dist) +"}" + right_query + "(.)*");
+
+for (auto it = res.begin(); it != res.end(); ++it) {
+		string line = res.get_file()->at(*it);
+		string new_line = "";
+		auto start = sregex_iterator(line.begin(), line.end(), regex_words);
+		auto end = sregex_iterator();
+		for (sregex_iterator i = start; i != end; ++i) {
+			smatch Match = *i;
+			string Match_str = Match.str();
+			new_line = new_line + Match_str + " ";
+		}
+		if (regex_match(new_line, regex_R2L) || regex_match(new_line, regex_L2R)) {
+			ret_lines->insert(*it);
+		}
+	}
+  return QueryResult(rep(), ret_lines, res.get_file());
 }
 /////////////////////////////////////////////////////////
