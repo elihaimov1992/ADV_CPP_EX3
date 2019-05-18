@@ -1,3 +1,5 @@
+/*Eli Haimov - 308019306*/
+
 #include "TextQuery.h"
 #include <sstream>
 #include <string>
@@ -14,7 +16,7 @@ TextQuery::TextQuery(ifstream &is): file(new vector<string>)
 {
     string text;
 	regex words_regex("[\\w']+");
-    while (getline(is, text)) {       // for each line in the file
+  while (getline(is, text)) {       // for each line in the file
 		file->push_back(text);        // remember this line of text
 		int n = file->size() - 1;     // the current line number
 //////////////////////////////////////////////////////////////////////////
