@@ -25,7 +25,8 @@ TextQuery::TextQuery(ifstream &is): file(new vector<string>)
 		 while (line >> word) {        // for each word in that line
 //////////////////////////////////////////////////////////////////////////
             auto words_begin = sregex_iterator(word.begin(), word.end(), words_regex);
-            word = (*words_begin).str();
+            smatch Match = *words_begin;
+            word = Match.str();
             // if word isn't already in wm, subscripting adds a new entry
             auto &lines = wm[word]; // lines is a shared_ptr 
             if (!lines) // that pointer is null the first time we see word
