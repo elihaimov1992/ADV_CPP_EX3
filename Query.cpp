@@ -17,9 +17,9 @@ std::shared_ptr<QueryBase> QueryBase::factory(const string& s)
   // Example: if(s == "smart") return std::shared_ptr<QueryBase>(new WordQuery("smart"));
 
   // All Regex:
-  regex regex_and("^\\s+([\\w']+)\\s+(AND)\\s+([\\w']+)\\s*$");
-  regex regex_or("^\\s+([\\w']+)\\s+(OR)\\s+([\\w']+)\\s*$");
-  regex regex_n("^\\s+([\\w']+)\\s+(\\d+)\\s+([\\w']+)\\s*$");
+  regex regex_and("^\\s*([\\w']+)\\s+(AND)\\s+([\\w']+)\\s*$");
+  regex regex_or("^\\s*([\\w']+)\\s+(OR)\\s+([\\w']+)\\s*$");
+  regex regex_n("^\\s*([\\w']+)\\s+(\\d+)\\s+([\\w']+)\\s*$");
   regex regex_not("^\\s*NOT\\s+([\\w']+)\\s*$");
   regex regex_word("^\\s*([\\w']+)\\s*$");
 
